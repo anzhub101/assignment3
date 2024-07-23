@@ -12,7 +12,6 @@ import { ref } from 'firebase/database';
   selector: 'app-home',
   standalone: true,
   imports: [
-    
     CommonModule,
     FormsModule,
     MContainerComponent,
@@ -29,22 +28,6 @@ export class HomeComponent {
   filterTerm: string = '';
   headers: string[] = ['ID','Make', 'Model', 'Year'];
   listofcars: Car[];
-  // This is code added for live charts from CanvasJS example
-  dataPoints: any[] = [];
-  chart: any;
-  chartOptions = {
-    theme: 'light2',
-    title: {
-      text: 'Live Data',
-    },
-    data: [
-      {
-        type: 'bar',
-        dataPoints: this.dataPoints,
-      },
-    ],
-  };
-  // Added code ends here
 
   constructor(private firebaseService: FirebaseService) {
     this.model = '';
@@ -67,10 +50,6 @@ export class HomeComponent {
       });
       this.listofcars = [...this.listofcars];
     });
-  }
-
-  getChartInstance(chart: object) {
-    this.chart = chart;
   }
 
   addCar() {
