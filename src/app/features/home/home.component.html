@@ -1,0 +1,32 @@
+<m-container>
+    <br>
+    <h2>Register Your Car</h2>
+    
+    <form class="pure-form pure-form-stacked">
+        <label for="make">Make</label>
+        <input id="make" type="text" [(ngModel)]="make" [ngModelOptions]="{standalone:true}"> 
+
+        <label for="model">Model</label>
+        <input id="model" type="text" [(ngModel)]="model" [ngModelOptions]="{standalone:true}"> 
+        
+        <label for="year">Year</label>
+        <input id="year" type="number" min="1990" max="2024" [(ngModel)]="year" [ngModelOptions]="{standalone:true}">       
+    </form>
+    <button class="pure-button" (click)="addCar()"> Add Car </button>
+    <button class="pure-button" (click)="removeAll()"> Remove All Cars </button>
+   
+   
+  
+     <m-search-button (search)="filterTerm = $event"></m-search-button>
+     <m-table
+        [data]="listofcars"
+        [filterTerm]="filterTerm"
+        [tableHeaders]="headers"
+        [showDeleteButton]="true"
+        [showMoreDetails]="true"
+        [showCaption]="true"
+        caption="Cars Available for Purchase"
+        (remove)="removeCar($event)"
+        (navigate)="navigateCar()"
+     ></m-table>
+</m-container>
