@@ -25,8 +25,10 @@
         [showDeleteButton]="true"
         [showMoreDetails]="true"
         [showCaption]="true"
+        [showBuy] ="true"
         caption="Cars Available for Purchase"
         (remove)="removeCar($event)"
         (navigate)="navigateCar()"
+        (buy)="buyCar()"
      ></m-table>
 </m-container>

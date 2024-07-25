@@ -30,6 +30,12 @@
           class="button">
           <span>&#8658;</span>
         </button>
+        <button
+        *ngIf="showBuy"
+        (click)="showBuyPressed(item.id)"
+        class="button">
+        <span>$</span>
+      </button>
       </td>
     </tr>
   </tbody>

@@ -17,12 +17,14 @@ export class MTableComponent {
   @Input() filterTerm: string = '';
   @Input() showDeleteButton: boolean = false;
   @Input() showMoreDetails: boolean = false;
+  @Input() showBuy: boolean = false; 
   @Input() showCaption: boolean = false;
   @Input() caption: string = 'Table Caption';
   @Input() tableHeaders: string[] = [];
 
   @Output() remove: EventEmitter<string> = new EventEmitter<string>();
   @Output() navigate: EventEmitter<number> = new EventEmitter<number>();
+  @Output() buy: EventEmitter<string> = new EventEmitter<string>(); 
 
   private originalData: any[]; 
   
@@ -30,7 +32,9 @@ export class MTableComponent {
     this.originalData = [];
   }
   
-  
+  showBuyPressed(itemID: string){
+    this.buy.emit(itemID);
+  }
   getObjectKeys(obj: any): string[] {
     if (!obj) {
       return []; 
