@@ -4,7 +4,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Car } from '../../data/Car';
+import { Car2 } from '../../data/Car2';
 import {onValue,ref} from 'firebase/database';
+import { Router } from '@angular/router';
 import { MTableComponent } from '../../m-framework/m-table/m-table.component';
 import { MSearchButtonComponent } from '../../m-framework/m-search-button/m-search-button.component';
 @Component({
@@ -24,9 +26,16 @@ export class HomeComponent {
   model: string;
   make: string;
   year: number;
+  id: string = '';
   filterTerm: string = '';
-  headers: string[] = ['ID','Make', 'Model', 'Year'];
+  headers: string[] = ['ID','Make', 'Model', 'Price', 'Year'];
   listofcars: Car[];
+  desc : string;
+  url : string = '';
+  price : number = 1000;
+  isUpdating: boolean = false;
+  purchasedCars : any;
+
   // This is code added for live charts from CanvasJS example
   dataPoints: any[] = [];
   chart: any;
@@ -44,11 +53,13 @@ export class HomeComponent {
   };
   // Added code ends here
 
-  constructor(private firebaseService: FirebaseService) {
+  constructor(private firebaseService: FirebaseService, private router: Router) {
     this.model = '';
     this.make = '';
     this.year = 2019;
     this.listofcars = [];
+    this.desc ='';
+    this.purchasedCars = [];
     
     //To get the list once
     /*
@@ -70,27 +81,73 @@ export class HomeComponent {
   getChartInstance(chart: object) {
     this.chart = chart;
   }
-  buyCar(){
-    console.log("Example of buy car complete");
+  buyCar(carID:string){
+    this.firebaseService.retrieve('cars2', carID).then((car2Data) => {
+      const data = car2Data.val();
+      this.purchasedCars.push(data);
+      this.firebaseService.pushToList('purchasedCars', this.purchasedCars)
+      localStorage.setItem('purchasedCars', JSON.stringify(this.purchasedCars));
+      this.purchasedCars=[];
+        });
   }
+
   addCar() {
-    let car = new Car("", this.make, this.model, this.year);
+    let car2 = new Car2("", this.make, this.model, this.year, this.price, this.desc, this.url);
+    let car = new Car("", this.make, this.model, this.year, this.price);
     this.firebaseService.pushToList('cars', car);
+    this.firebaseService.pushToList('cars2', car2);
     this.make = '';
     this.model = '';
     this.year = 2019;
+    this.price = 0;
+    this.desc = '';
+    this.url = '';
   }
-
+  updateCar(carID: string){
+    this.isUpdating = true;
+    this.firebaseService.retrieve('cars', carID).then((carData) => {
+      const data = carData.val();
+      this.make = data.make;
+      this.model = data.model;
+      this.year = data.year;
+      this.id = carID;
+      this.price = data.price;
+    });
+    this.firebaseService.retrieve('cars2', carID).then((car2Data) =>{
+      const data = car2Data.val();
+      this.make = data.make;
+      this.model = data.model;
+      this.year = data.year;
+      this.id = carID
+      this.price = data.price;
+      this.desc = data.desc;
+      this.url = data.url;
+    });
+  }
+  newDetails() {
+    let car = new Car("", this.make, this.model, this.year, this.price);
+    this.firebaseService.update('cars', this.id, car )
+    let car2 = new Car2("", this.make, this.model, this.year, this.price, this.desc, this.url);
+    this.firebaseService.update('cars2', this.id, car2 )
+    this.isUpdating = false;
+    }
+  
   removeCar(carID: string) { 
     this.firebaseService.deleteFromList("cars", carID);
+    this.firebaseService.deleteFromList("cars2", carID);
+
   }
   removeAll() {
     this.firebaseService.delete("cars","");
+    this.firebaseService.delete("cars2","");
+
+
   }
-  navigateCar() {}
+  navigateCar() {
+    this.router.navigate(['/feature1']);
+  }
+
 }
-
-
 // What is the event cycle leading to the removal of a row from the table upon clicking on the delete
 // button? 
 

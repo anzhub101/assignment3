@@ -1,5 +1,5 @@
 <m-container>
-    <br>
+    <br><br>
     <h2>Register Your Car</h2>
     
     <form class="pure-form pure-form-stacked">
@@ -10,12 +10,20 @@
         <input id="model" type="text" [(ngModel)]="model" [ngModelOptions]="{standalone:true}"> 
         
         <label for="year">Year</label>
-        <input id="year" type="number" min="1990" max="2024" [(ngModel)]="year" [ngModelOptions]="{standalone:true}">       
+        <input id="year" type="number" min="1990" max="2024" [(ngModel)]="year" [ngModelOptions]="{standalone:true}">   
+        
+        <label for="price">Price</label>
+        <input id="price" type="number" min="1000" max="5000000" [(ngModel)]="price" [ngModelOptions]="{standalone:true}">  
+        
+        <label for="descr">Description of car</label>
+        <input id="descr" type="string" [(ngModel)]="desc" [ngModelOptions]="{standalone:true}">  
+
+        <label for="url">Image URL</label>
+        <input id="url" type="string" [(ngModel)]="url" [ngModelOptions]="{standalone:true}">  
     </form>
-    <button class="pure-button" (click)="addCar()"> Add Car </button>
+    <button *ngIf="!isUpdating" class="pure-button" (click)="addCar()"> Add Car </button>
+    <button *ngIf="isUpdating" class ="pure-button" (click)=" newDetails()"> Update </button>
     <button class="pure-button" (click)="removeAll()"> Remove All Cars </button>
-   
-   
   
      <m-search-button (search)="filterTerm = $event"></m-search-button>
      <m-table
@@ -23,12 +31,14 @@
         [filterTerm]="filterTerm"
         [tableHeaders]="headers"
         [showDeleteButton]="true"
-        [showMoreDetails]="true"
         [showCaption]="true"
-        [showBuy] ="true"
+        [showMoreDetails]="true"
+        [showBuy] = "true"
+        [showUpdate] = "true"
         caption="Cars Available for Purchase"
         (remove)="removeCar($event)"
         (navigate)="navigateCar()"
-        (buy)="buyCar()"
+        (buy)="buyCar($event)"
+        (update)="updateCar($event)"
      ></m-table>
 </m-container>

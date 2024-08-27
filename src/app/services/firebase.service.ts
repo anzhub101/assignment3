@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Car } from '../data/Car';
 // Firebase Module API functions
 import {
   getDatabase,
@@ -21,7 +22,6 @@ import { initializeApp } from 'firebase/app';
 // push: Adds an object to a database list. Autogenerates the ID
 // onValue: subscribes to changes in the database. Gets called everytime the changes happen with new data.
 // child: gives you a reference to your children
-
 // Firebase Service
 @Injectable({
   providedIn: 'root',
@@ -35,14 +35,14 @@ export class FirebaseService {
   }
   setupFirebase() {
     const firebaseConfig = {
-      apiKey: "AIzaSyCnk5pXctfgwgN_JPjTT0Zfblwhdy21_wQ",
-      authDomain: "cen333db.firebaseapp.com",
-      databaseURL: "https://cen333db-default-rtdb.firebaseio.com",
-      projectId: "cen333db",
-      storageBucket: "cen333db.appspot.com",
-      messagingSenderId: "223377335324",
-      appId: "1:223377335324:web:039a6f8e5605e38c93ebd9",
-      measurementId: "G-DDRD83DX4Z"
+      apiKey: "AIzaSyA1Pb1G-eXWOvDkP_8AW59e7BuuzJc3FLY",
+      authDomain: "fir-app-4fb9a.firebaseapp.com",
+      databaseURL: "https://fir-app-4fb9a-default-rtdb.firebaseio.com",
+      projectId: "fir-app-4fb9a",
+      storageBucket: "fir-app-4fb9a.appspot.com",
+      messagingSenderId: "4375361106",
+      appId: "1:4375361106:web:219cbb5a008f8f2eec118b",
+      measurementId: "G-1E2WGK8THK"
     };
     initializeApp(firebaseConfig);
   }
@@ -60,16 +60,41 @@ export class FirebaseService {
   delete(path: string, key: string): Promise<void>{ 
     return remove(ref(this.db, path+"/"+key));
   }
-
-  // Lists
+  // List
   // Add to List
-  pushToList(path: string, data: any){
-    return push(ref(this.db, path), data).key;
+  
+  async pushToList(path: string, data: any) {
+      const snapshot = await get(ref(this.db, path));
+      let nextKey = 1;
+
+      if (snapshot.exists()) {
+        const cars = snapshot.val();
+        const keys = Object.keys(cars).map(Number);
+        const lastKey = Math.max(...keys);
+        nextKey = lastKey + 1;
+      }
+      await set(ref(this.db, path+'/'+nextKey), data);
+      return nextKey;
   }
-  // Delete from list
-  deleteFromList(path: string, key: string){
-    this.delete(path, key);
+  async deleteFromList(path: string, carID: string) {
+    this.delete(path, carID);
+    
+    const snapshot = await get(ref(this.db, path));
+    if (snapshot.exists()) {
+      const cars = snapshot.val();
+      const updatedCars: { [key: string]: Car } = {};
+      let Lkey = 1;
+
+      for (const key in cars) {
+        if (cars.hasOwnProperty(key)) {
+          updatedCars[Lkey] = cars[key];
+          Lkey++;
+        }
+      }
+      await set(ref(this.db, path), updatedCars);
+    }
   }
+  
   // Get List Once 
   async getList(path: string){
     const dblist = await get(ref(this.db, path));
@@ -83,5 +108,6 @@ export class FirebaseService {
   getDB(){
     return this.db; 
   }
+
 }
 

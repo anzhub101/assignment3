@@ -1,4 +1,12 @@
 <m-container>
-    <br><br>
-    Feature 1
+    <br><br><br>
+    <button class= "pure-button" (click)="loadCars()">Load Cars</button>
+    <div *ngFor="let car of cars">
+        <m-card 
+          [header]="car.make + ' ' + car.model" 
+          [subheader]="car.year.toString()" 
+          [imageurl]="car.url">
+          {{ car.desc }}
+        </m-card>
+      </div>
 </m-container>

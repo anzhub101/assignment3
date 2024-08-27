@@ -19,12 +19,15 @@ export class MTableComponent {
   @Input() showMoreDetails: boolean = false;
   @Input() showBuy: boolean = false; 
   @Input() showCaption: boolean = false;
+  @Input() showUpdate: boolean = false;
   @Input() caption: string = 'Table Caption';
   @Input() tableHeaders: string[] = [];
 
   @Output() remove: EventEmitter<string> = new EventEmitter<string>();
   @Output() navigate: EventEmitter<number> = new EventEmitter<number>();
   @Output() buy: EventEmitter<string> = new EventEmitter<string>(); 
+  @Output() update: EventEmitter<string> = new EventEmitter<string>(); 
+
 
   private originalData: any[]; 
   
@@ -47,7 +50,9 @@ export class MTableComponent {
   removeItem(itemId: string) {
     this.remove.emit(itemId);
   }
-
+  updateItem(itemID: string){
+    this.update.emit(itemID);
+  }
   ngOnChanges(changes: SimpleChanges): void {
     
     if (changes['data']) {
